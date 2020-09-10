@@ -20,23 +20,6 @@ import java.util.Map;
 
 
 public class ReadExcel {
-    public static void main(String[] args) throws IOException, InvalidFormatException {
-
-        int startrow = 4;
-        int endrow = 330;
-        int startcol = stringtoInt("A");
-        int endcol = stringtoInt("J");
-
-        String[][] readexcel = readexcel("/Users/everywherewego/Desktop/副本GPS对应表.xlsx", 1, startrow, endrow, startcol, endcol);
-        for (int i = 0; i <= endrow - startrow; i++) {
-            for (int j = 0; j <= endcol - startcol; j++) {
-                System.out.print(readexcel[i][j] + " ");
-            }
-            System.out.println();
-        }
-    }
-
-
     public static List<String> readexcel(String path, int sheetPage) throws IOException, InvalidFormatException {
         List<String> list = new LinkedList<>();
         Workbook wb = readFile(path);
