@@ -1,16 +1,13 @@
 package com.bfd;
 
-import com.alibaba.fastjson.JSONObject;
+import com.bfd.tools.apitype.ThreadDemo1;
+import com.bfd.tools.apitype.ThreadDemo2;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
-import static com.bfd.tools.HttpClientHelper.sendGet;
 import static com.bfd.tools.ReadExcel.readexcel;
 import static com.bfd.tools.ReadExcel.stringtoInt;
 
@@ -25,9 +22,9 @@ public class apitokafka {
     public static void run() {
 
         int startrow = 1;
-        int endrow = 2;
+        int endrow = 3;
         int startcol = stringtoInt("A");
-        int endcol = stringtoInt("D");
+        int endcol = stringtoInt("G");
 
         String[][] readexcel = new String[0][];
         try {
@@ -35,38 +32,37 @@ public class apitokafka {
         } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
         }
+
+        String urltype;
         String url;
-        String type;
+        String httptype;
         String time;
         String json;
+
+        //一个url创建一个线程
         for (int i = 1; i <= endrow - startrow; i++) {
-            url = readexcel[i][0];
-            type = readexcel[i][1];
-            if ("get".equals(type.toLowerCase())) {
-                String re = sendGet(url, null, null, null).get("responseContext");
-                JSONObject jsonObject = JSONObject.parseObject(re);
-                System.out.println(jsonObject);
+            urltype = readexcel[i][0];
+            url = readexcel[i][1];
+            httptype = readexcel[i][2];
 
-            } else if ("post".equals(type.toLowerCase())) {
-                System.out.println("发送post请求");
-
+            logger.info("urltype:" + urltype);
+            if ("1".equals(urltype)) {
+                ThreadDemo1 thread = new ThreadDemo1(httptype, url);
+                thread.setName("线程" + i);
+                thread.start();
+            } else if ("2".equals(urltype)) {
+                ThreadDemo2 thread = new ThreadDemo2(httptype, url);
+                thread.setName("线程" + i);
+                thread.start();
             }
-            System.out.println();
         }
     }
 
-    public static void startSchedule() {
-        ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(2);
-        executorService.scheduleAtFixedRate(
-                apitokafka::run,
-                1,
-                1,
-                TimeUnit.SECONDS);
-        logger.info("程序已经启动");
-    }
 
     public static void main(String[] args) {
-
-        startSchedule();
+        run();
     }
 }
+
+
+
