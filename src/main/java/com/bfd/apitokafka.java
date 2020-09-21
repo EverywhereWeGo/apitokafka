@@ -21,6 +21,7 @@ public class apitokafka {
 
     public static void run() {
 
+        int sheet = 0;
         int startrow = 1;
         int endrow = 3;
         int startcol = stringtoInt("A");
@@ -28,7 +29,7 @@ public class apitokafka {
 
         String[][] readexcel = new String[0][];
         try {
-            readexcel = readexcel("/Users/everywherewego/Desktop/api接数.xlsx", 0, startrow, endrow, startcol, endcol);
+            readexcel = readexcel("/Users/everywherewego/Desktop/api接数.xlsx", sheet, startrow, endrow, startcol, endcol);
         } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
         }
