@@ -6,16 +6,15 @@ package com.bfd.tools.apitype;
  */
 
 //该类型接口为3s更新一次,每次都是最新的数据
-public class ThreadDemo2 extends Thread {
+public class ApiType2 {
     private String httptype;
     private String url;
 
-    public ThreadDemo2(String httptype, String url) {
+    public ApiType2(String httptype, String url) {
         this.httptype = httptype;
         this.url = url;
     }
 
-    @Override
     public void run() {
         System.out.println(httptype + ":" + url);
     }

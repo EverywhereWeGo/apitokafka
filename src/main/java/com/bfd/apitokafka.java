@@ -1,7 +1,7 @@
 package com.bfd;
 
-import com.bfd.tools.apitype.ThreadDemo1;
-import com.bfd.tools.apitype.ThreadDemo2;
+import com.bfd.tools.apitype.ApiType1;
+import com.bfd.tools.apitype.ApiType2;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,13 +47,11 @@ public class apitokafka {
 
             logger.info("urltype:" + urltype);
             if ("1".equals(urltype)) {
-                ThreadDemo1 thread = new ThreadDemo1(httptype, url);
-                thread.setName("线程" + i);
-                thread.start();
+                ApiType1 api = new ApiType1(httptype, url);
+                api.run();
             } else if ("2".equals(urltype)) {
-                ThreadDemo2 thread = new ThreadDemo2(httptype, url);
-                thread.setName("线程" + i);
-                thread.start();
+                ApiType2 api = new ApiType2(httptype, url);
+                api.run();
             }
         }
     }

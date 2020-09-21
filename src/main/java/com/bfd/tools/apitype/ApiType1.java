@@ -16,13 +16,13 @@ import static com.bfd.tools.HttpClientHelper.sendGet;
  */
 
 
-public class ThreadDemo1 extends Thread {
-    private static Logger logger = LoggerFactory.getLogger(ThreadDemo1.class);
+public class ApiType1 {
+    private static Logger logger = LoggerFactory.getLogger(ApiType1.class);
 
     private String httptype;
     private String url;
 
-    public ThreadDemo1(String httptype, String url) {
+    public ApiType1(String httptype, String url) {
         this.httptype = httptype;
         this.url = url;
     }
@@ -31,7 +31,7 @@ public class ThreadDemo1 extends Thread {
         if ("get".equals(httptype.toLowerCase())) {
             String re = sendGet(url, null, null, null).get("responseContext");
             JSONObject jsonObject = JSONObject.parseObject(re);
-            System.out.println(jsonObject);
+            logger.info(jsonObject.toString());
 
         } else if ("post".equals(httptype.toLowerCase())) {
             System.out.println("发送post请求");
@@ -57,7 +57,6 @@ public class ThreadDemo1 extends Thread {
         logger.info("程序已经启动");
     }
 
-    @Override
     public void run() {
         startSchedule(httptype, url);
 
