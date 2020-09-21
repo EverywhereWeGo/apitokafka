@@ -1,4 +1,4 @@
-package com.bfd.tools.apitype;
+package com.bfd.apitype;
 
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;

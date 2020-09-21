@@ -1,7 +1,7 @@
 package com.bfd;
 
-import com.bfd.tools.apitype.ApiType1;
-import com.bfd.tools.apitype.ApiType2;
+import com.bfd.apitype.ApiType1;
+import com.bfd.apitype.ApiType2;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

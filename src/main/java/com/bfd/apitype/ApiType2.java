@@ -1,4 +1,4 @@
-package com.bfd.tools.apitype;
+package com.bfd.apitype;
 
 /**
  * @author everywherewego
