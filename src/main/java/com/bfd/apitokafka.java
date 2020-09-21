@@ -39,7 +39,7 @@ public class apitokafka {
         String time;
         String json;
 
-        //一个url创建一个线程
+        //一个url创建一个对应类型的实例
         for (int i = 1; i <= endrow - startrow; i++) {
             urltype = readexcel[i][0];
             url = readexcel[i][1];
