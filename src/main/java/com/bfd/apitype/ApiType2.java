@@ -1,7 +1,6 @@
 package com.bfd.apitype;
 
 import com.alibaba.fastjson.JSONObject;
-import com.jayway.jsonpath.JsonPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,10 +21,9 @@ public class ApiType2 {
     private static void sendhttp(String httptype, String url) {
         if ("get".equals(httptype.toLowerCase())) {
             String re = sendGet(url, null, null, null).get("responseContext");
-            JSONObject jsonObject = JSONObject.parseObject(re);
-//            logger.info(jsonObject.toString());
-            //判断重复
-            String time = JsonPath.read(re, "$.data[0].time");
+            String replace = re.replace("callbackstaticdata(", "").replace(")", "");
+            JSONObject jsonObject = JSONObject.parseObject(replace);
+            logger.info(jsonObject.toString());
         } else if ("post".equals(httptype.toLowerCase())) {
             System.out.println("发送post请求");
 
