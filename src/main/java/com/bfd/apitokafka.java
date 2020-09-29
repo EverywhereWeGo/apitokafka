@@ -34,25 +34,16 @@ public class apitokafka {
             e.printStackTrace();
         }
 
-        String urltype;
-        String url;
-        String httptype;
-        String time;
-        String json;
-
         //一个url创建一个对应类型的实例
         for (int i = 1; i <= endrow - startrow; i++) {
-            urltype = readexcel[i][0];
-            url = readexcel[i][1];
-            httptype = readexcel[i][2];
+            String urltype = readexcel[i][0];
 
-            logger.info("urltype:" + urltype);
             if ("1".equals(urltype)) {
-                ApiType1 api = new ApiType1(httptype, url);
-                api.run();
+                ApiType1 api = new ApiType1();
+                api.run(readexcel[i]);
             } else if ("2".equals(urltype)) {
-                ApiType2 api = new ApiType2(httptype, url);
-                api.run();
+                ApiType2 api = new ApiType2();
+                api.run(readexcel[i]);
             }
         }
     }

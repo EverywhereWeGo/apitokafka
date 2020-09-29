@@ -1,6 +1,7 @@
 package com.bfd.apitype;
 
 import com.alibaba.fastjson.JSONObject;
+import com.jayway.jsonpath.JsonPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,35 +15,39 @@ import static com.bfd.tools.HttpClientHelper.sendGet;
  * @author everywherewego
  * @date 2020-09-21 23:20
  */
-
-
-public class ApiType1 {
+//该类型的api为实时更新的api,3s数据更新一次
+//实例api:http://changzhou.czczh.cn/a/api/station/v1/getLatestDataWithSNS?sns=C00E-0005&ak=w6fMRS9IN0hzOHHb
+public class ApiType1  {
     private static Logger logger = LoggerFactory.getLogger(ApiType1.class);
 
-    private String httptype;
-    private String url;
+    public static String lasttime = "";
 
-    public ApiType1(String httptype, String url) {
-        this.httptype = httptype;
-        this.url = url;
+
+    public ApiType1() {
+
     }
 
     private static void sendhttp(String httptype, String url) {
         if ("get".equals(httptype.toLowerCase())) {
             String re = sendGet(url, null, null, null).get("responseContext");
             JSONObject jsonObject = JSONObject.parseObject(re);
-            logger.info(jsonObject.toString());
-
+//            logger.info(jsonObject.toString());
+            //判断重复
+            String time = JsonPath.read(re, "$.data[0].time");
+            if (!time.equals(lasttime)) {
+                lasttime = time;
+                logger.info(jsonObject.toString());
+            }
         } else if ("post".equals(httptype.toLowerCase())) {
             System.out.println("发送post请求");
 
         }
-
     }
 
-    private static void startSchedule(String httptype, String url) {
+    private static void startSchedule(String httptype, String url, int time) {
         String a = httptype;
         String b = url;
+        int c = time;
         ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(2);
         executorService.scheduleAtFixedRate(
                 new Runnable() {
@@ -52,13 +57,13 @@ public class ApiType1 {
                     }
                 },
                 1,
-                1,
+                c,
                 TimeUnit.SECONDS);
         logger.info("程序已经启动");
     }
 
-    public void run() {
-        startSchedule(httptype, url);
+    public void run(String[] type1Params) {
+        startSchedule(type1Params[2], type1Params[1], Integer.parseInt(type1Params[3]));
 
     }
 
