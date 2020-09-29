@@ -10,6 +10,8 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import static com.bfd.tools.HttpClientHelper.sendGet;
+import static com.bfd.tools.Kafkautils.createTopic;
+import static com.bfd.tools.Kafkautils.sendMessage;
 
 /**
  * @author everywherewego
@@ -17,7 +19,7 @@ import static com.bfd.tools.HttpClientHelper.sendGet;
  */
 //该类型的api为实时更新的api,3s数据更新一次
 //实例api:http://changzhou.czczh.cn/a/api/station/v1/getLatestDataWithSNS?sns=C00E-0005&ak=w6fMRS9IN0hzOHHb
-public class ApiType1  {
+public class ApiType1 {
     private static Logger logger = LoggerFactory.getLogger(ApiType1.class);
 
     public static String lasttime = "";
@@ -27,7 +29,7 @@ public class ApiType1  {
 
     }
 
-    private static void sendhttp(String httptype, String url) {
+    private static void sendhttp(String httptype, String url, String topic) {
         if ("get".equals(httptype.toLowerCase())) {
             String re = sendGet(url, null, null, null).get("responseContext");
             JSONObject jsonObject = JSONObject.parseObject(re);
@@ -37,6 +39,7 @@ public class ApiType1  {
             if (!time.equals(lasttime)) {
                 lasttime = time;
                 logger.info(jsonObject.toString());
+                sendMessage(topic, jsonObject.toString());
             }
         } else if ("post".equals(httptype.toLowerCase())) {
             System.out.println("发送post请求");
@@ -44,26 +47,24 @@ public class ApiType1  {
         }
     }
 
-    private static void startSchedule(String httptype, String url, int time) {
-        String a = httptype;
-        String b = url;
-        int c = time;
+    private static void startSchedule(String httptype, String url, int time, String topic) {
         ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(2);
         executorService.scheduleAtFixedRate(
                 new Runnable() {
                     @Override
                     public void run() {
-                        sendhttp(a, b);
+                        sendhttp(url, httptype, topic);
                     }
                 },
                 1,
-                c,
+                time,
                 TimeUnit.SECONDS);
         logger.info("程序已经启动");
     }
 
     public void run(String[] type1Params) {
-        startSchedule(type1Params[2], type1Params[1], Integer.parseInt(type1Params[3]));
+        createTopic(type1Params[8]);
+        startSchedule(type1Params[2], type1Params[1], Integer.parseInt(type1Params[3]), type1Params[8]);
 
     }
 

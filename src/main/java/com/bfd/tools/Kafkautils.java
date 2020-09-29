@@ -37,8 +37,8 @@ public class Kafkautils {
         zkUtils = ZkUtils.apply("172.24.5.242:2181", 30000, 30000, JaasUtils.isZkSecurityEnabled());
     }
 
-    public static void sendMessage(String message) {
-        producer.send(new ProducerRecord<String, String>("test", message));
+    public static void sendMessage(String topic, String message) {
+        producer.send(new ProducerRecord<String, String>(topic, message));
         producer.flush();
     }
 
@@ -53,17 +53,4 @@ public class Kafkautils {
         System.out.println(topics);
         return topics;
     }
-
-    public static void main(String[] args) {
-//        sendMessage("asdfasdf");
-
-//        ZkUtils zkUtils = ZkUtils.apply("172.24.5.242:2181", 30000, 30000, JaasUtils.isZkSecurityEnabled());
-        // 创建一个单分区单副本名为t1的topic
-//        AdminUtils.createTopic(zkUtils, "t1", 1, 1, new Properties(), RackAwareMode.Enforced$.MODULE$);
-//        zkUtils.close();
-
-
-    }
-
-
 }

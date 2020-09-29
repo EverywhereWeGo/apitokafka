@@ -20,13 +20,13 @@ public class ApiType2 {
     private static Logger logger = LoggerFactory.getLogger(ApiType2.class);
 
 
-    private static void sendhttp(String httptype, String url) {
+    private static void sendhttp(String httptype, String url, String topic) {
         if ("get".equals(httptype.toLowerCase())) {
             String re = sendGet(url, null, null, null).get("responseContext");
             String replace = re.replace("callbackstaticdata(", "").replace(")", "");
             JSONObject jsonObject = JSONObject.parseObject(replace);
             logger.info(jsonObject.toString());
-            sendMessage(jsonObject.toString());
+            sendMessage(topic, jsonObject.toString());
         } else if ("post".equals(httptype.toLowerCase())) {
             System.out.println("发送post请求");
 
@@ -35,26 +35,23 @@ public class ApiType2 {
 
     }
 
-    private static void startSchedule(String httptype, String url, int time) {
-        String a = httptype;
-        String b = url;
-        int c = time;
+    private static void startSchedule(String httptype, String url, int time, String topic) {
         ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(2);
         executorService.scheduleAtFixedRate(
                 new Runnable() {
                     @Override
                     public void run() {
-                        sendhttp(a, b);
+                        sendhttp(httptype, url, topic);
                     }
                 },
                 1,
-                c,
+                time,
                 TimeUnit.SECONDS);
         logger.info("程序已经启动");
     }
 
     public void run(String[] type1Params) {
         createTopic(type1Params[8]);
-        startSchedule(type1Params[2], type1Params[1], Integer.parseInt(type1Params[3]));
+        startSchedule(type1Params[2], type1Params[1], Integer.parseInt(type1Params[3]), type1Params[8]);
     }
 }
