@@ -27,10 +27,7 @@ public class ApiType2 {
             sendMessage(topic, jsonObject.toString());
         } else if ("post".equals(httptype.toLowerCase())) {
             System.out.println("发送post请求");
-
         }
-
-
     }
 
     private static void startSchedule(String httptype, String url, int time, String topic) {

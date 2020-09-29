@@ -24,10 +24,6 @@ public class ApiType1 {
     public static String lasttime = "";
 
 
-    public ApiType1() {
-
-    }
-
     private static void sendhttp(String httptype, String url, String topic) {
         if ("get".equals(httptype.toLowerCase())) {
             String re = sendGet(url, null, null, null).get("responseContext");
@@ -40,9 +36,9 @@ public class ApiType1 {
             }
         } else if ("post".equals(httptype.toLowerCase())) {
             System.out.println("发送post请求");
-
         }
     }
+
 
     private static void startSchedule(String httptype, String url, int time, String topic) {
         ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(2);
