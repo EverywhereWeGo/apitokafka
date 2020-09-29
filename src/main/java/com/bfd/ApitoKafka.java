@@ -1,5 +1,6 @@
 package com.bfd;
 
+import com.bfd.apitype.ApiType1;
 import com.bfd.apitype.ApiType2;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ public class ApitoKafka {
         int startrow = 1;
         int endrow = 3;
         int startcol = stringtoInt("A");
-        int endcol = stringtoInt("G");
+        int endcol = stringtoInt("I");
 
         String[][] readexcel = new String[0][];
         try {
@@ -38,8 +39,8 @@ public class ApitoKafka {
             String urltype = readexcel[i][0];
 
             if ("1".equals(urltype)) {
-//                ApiType1 api = new ApiType1();
-//                api.run(readexcel[i]);
+                ApiType1 api = new ApiType1();
+                api.run(readexcel[i]);
             } else if ("2".equals(urltype)) {
                 ApiType2 api = new ApiType2();
                 api.run(readexcel[i]);

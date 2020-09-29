@@ -9,6 +9,8 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import static com.bfd.tools.HttpClientHelper.sendGet;
+import static com.bfd.tools.Kafkautils.createTopic;
+import static com.bfd.tools.Kafkautils.sendMessage;
 
 /**
  * @author everywherewego
@@ -24,6 +26,7 @@ public class ApiType2 {
             String replace = re.replace("callbackstaticdata(", "").replace(")", "");
             JSONObject jsonObject = JSONObject.parseObject(replace);
             logger.info(jsonObject.toString());
+            sendMessage(jsonObject.toString());
         } else if ("post".equals(httptype.toLowerCase())) {
             System.out.println("发送post请求");
 
@@ -51,7 +54,7 @@ public class ApiType2 {
     }
 
     public void run(String[] type1Params) {
+        createTopic(type1Params[8]);
         startSchedule(type1Params[2], type1Params[1], Integer.parseInt(type1Params[3]));
     }
-
 }
