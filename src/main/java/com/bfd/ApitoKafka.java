@@ -16,8 +16,8 @@ import static com.bfd.tools.ReadExcel.stringtoInt;
  * @date 2020-09-03 18:42
  */
 
-public class apitokafka {
-    private static Logger logger = LoggerFactory.getLogger(apitokafka.class);
+public class ApitoKafka {
+    private static Logger logger = LoggerFactory.getLogger(ApitoKafka.class);
 
     public static void run() {
 
