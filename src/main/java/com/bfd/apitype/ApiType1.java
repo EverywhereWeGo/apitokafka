@@ -10,7 +10,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import static com.bfd.tools.HttpClientHelper.sendGet;
-import static com.bfd.tools.Kafkautils.createTopic;
 import static com.bfd.tools.Kafkautils.sendMessage;
 
 /**
@@ -33,12 +32,10 @@ public class ApiType1 {
         if ("get".equals(httptype.toLowerCase())) {
             String re = sendGet(url, null, null, null).get("responseContext");
             JSONObject jsonObject = JSONObject.parseObject(re);
-//            logger.info(jsonObject.toString());
             //判断重复
             String time = JsonPath.read(re, "$.data[0].time");
             if (!time.equals(lasttime)) {
                 lasttime = time;
-                logger.info(jsonObject.toString());
                 sendMessage(topic, jsonObject.toString());
             }
         } else if ("post".equals(httptype.toLowerCase())) {
@@ -53,7 +50,7 @@ public class ApiType1 {
                 new Runnable() {
                     @Override
                     public void run() {
-                        sendhttp(url, httptype, topic);
+                        sendhttp(httptype, url, topic);
                     }
                 },
                 1,
@@ -63,7 +60,6 @@ public class ApiType1 {
     }
 
     public void run(String[] type1Params) {
-        createTopic(type1Params[8]);
         startSchedule(type1Params[2], type1Params[1], Integer.parseInt(type1Params[3]), type1Params[8]);
 
     }

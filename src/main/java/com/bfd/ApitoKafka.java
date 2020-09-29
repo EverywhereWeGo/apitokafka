@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+import static com.bfd.tools.Kafkautils.createTopic;
 import static com.bfd.tools.ReadExcel.readexcel;
 import static com.bfd.tools.ReadExcel.stringtoInt;
 
@@ -36,6 +37,7 @@ public class ApitoKafka {
 
         //一个url创建一个对应类型的实例
         for (int i = 1; i <= endrow - startrow; i++) {
+            createTopic(readexcel[i][8]);
             String urltype = readexcel[i][0];
 
             if ("1".equals(urltype)) {

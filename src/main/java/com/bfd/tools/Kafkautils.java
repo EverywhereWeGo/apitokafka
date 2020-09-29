@@ -50,7 +50,6 @@ public class Kafkautils {
 
     public static List<String> showTopics() {
         List<String> topics = JavaConversions.seqAsJavaList(zkUtils.getAllTopics());
-        System.out.println(topics);
         return topics;
     }
 }
