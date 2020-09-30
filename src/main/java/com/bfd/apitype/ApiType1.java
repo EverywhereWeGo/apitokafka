@@ -52,7 +52,7 @@ public class ApiType1 {
                 1,
                 time,
                 TimeUnit.SECONDS);
-        logger.info("程序已经启动");
+        logger.info("程序已经启动:" + url);
     }
 
     public void run(String[] type1Params) {
