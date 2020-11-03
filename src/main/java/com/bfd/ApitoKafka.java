@@ -24,7 +24,7 @@ public class ApitoKafka {
 
         int sheet = 0;
         int startrow = 1;
-        int endrow = 3;
+        int endrow = 4;
         int startcol = stringtoInt("A");
         int endcol = stringtoInt("I");
 
