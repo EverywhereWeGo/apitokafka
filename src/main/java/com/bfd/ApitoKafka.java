@@ -30,7 +30,7 @@ public class ApitoKafka {
 
         String[][] readexcel = new String[0][];
         try {
-            readexcel = readexcel("/Users/everywherewego/Desktop/api接数.xlsx", sheet, startrow, endrow, startcol, endcol);
+            readexcel = readexcel("/Users/everywherewego/IdeaProjects/apitokafka/src/main/resources/api接数.xlsx", sheet, startrow, endrow, startcol, endcol);
         } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
         }
