@@ -15,7 +15,7 @@ import static com.bfd.tools.Kafkautils.sendMessage;
  * @author everywherewego
  * @date 2020-09-21 23:20
  */
-public class ApiType2 {
+public class ApiType2 implements ApiType {
     private static Logger logger = LoggerFactory.getLogger(ApiType2.class);
 
 
@@ -26,6 +26,9 @@ public class ApiType2 {
             JSONObject jsonObject = JSONObject.parseObject(replace);
             sendMessage(topic, jsonObject.toString());
         } else if ("post".equals(httptype.toLowerCase())) {
+            /*todo
+            发送post请求时该如何处理
+            * */
             System.out.println("发送post请求");
         }
     }
@@ -45,6 +48,7 @@ public class ApiType2 {
         logger.info("程序已经启动:" + url);
     }
 
+    @Override
     public void run(String[] type1Params) {
         startSchedule(type1Params[2], type1Params[1], Integer.parseInt(type1Params[3]), type1Params[8]);
     }

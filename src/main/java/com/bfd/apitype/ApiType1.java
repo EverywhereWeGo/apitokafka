@@ -18,7 +18,7 @@ import static com.bfd.tools.Kafkautils.sendMessage;
  */
 //该类型的api为实时更新的api,3s数据更新一次
 //实例api:http://changzhou.czczh.cn/a/api/station/v1/getLatestDataWithSNS?sns=C00E-0005&ak=w6fMRS9IN0hzOHHb
-public class ApiType1 {
+public class ApiType1 implements ApiType {
     private static Logger logger = LoggerFactory.getLogger(ApiType1.class);
 
     public static String lasttime = "";
@@ -35,6 +35,9 @@ public class ApiType1 {
                 sendMessage(topic, jsonObject.toString());
             }
         } else if ("post".equals(httptype.toLowerCase())) {
+            /*todo
+             * 发送post请求时该如何处理
+             * */
             System.out.println("发送post请求");
         }
     }
@@ -55,9 +58,9 @@ public class ApiType1 {
         logger.info("程序已经启动:" + url);
     }
 
+    @Override
     public void run(String[] type1Params) {
         startSchedule(type1Params[2], type1Params[1], Integer.parseInt(type1Params[3]), type1Params[8]);
 
     }
-
 }
