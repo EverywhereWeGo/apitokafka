@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:./db/apitokafka
+    username: sa
+    password: 123456
+    initialization-mode: always
+    sql-script-encoding: utf-8
+    schema:
+      - classpath:apitokafka_init.sql
+  quartz:
+    job-store-type: jdbc
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: MyScheduler
+            instanceId: AUTO
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            tablePrefix: QRTZ_
+            useProperties: false
+            misfireThreshold: 1
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 20
+            threadPriority: 5
+            threadsInheritContextClassLoaderOfInitializingThread: true
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true #开启驼峰命名规则支持
+    cache-enabled: false
+    #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #扫描mapper持久层接口
+  #  mapper-locations: classpath:com.xwl/**/mapper/*Mapper.xml
