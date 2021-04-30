@@ -131,7 +131,7 @@ public class TaskController {
         apiInfoMapper.updateById(apiInfo);
 
         //删除表
-        ddlSql("drop table if exists apitokafka." + apiInfo.getTopicName());
+        ddlSql("drop table if exists " + apiInfo.getTopicName());
         return Result.succeed("重置成功");
     }
 }

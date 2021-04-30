@@ -28,7 +28,7 @@
         var form = layui.form;
         table.render({
             elem: '#list'
-            , url: 'http://localhost:8080/api/list'
+            , url: '/api/list'
             , cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
             // , page: true
             , cols: [[
@@ -52,7 +52,7 @@
                     obj.del();
                     layer.close(index);
                     var settings = {
-                        "url": "http://localhost:8080/api/delete/" + data.id,
+                        "url": "/api/delete/" + data.id,
                         "method": "GET",
                     };
                     $.ajax(settings).done(function (response) {
@@ -61,7 +61,7 @@
                 });
             } else if (obj.event === 'reset') {
                 var settings = {
-                    "url": "http://localhost:8080/api/reset/" + data.id,
+                    "url": "/api/reset/" + data.id,
                     "method": "GET",
                 };
 
@@ -75,7 +75,7 @@
         //启停状态切换
         form.on('switch(switch)', function (obj) {
             var settings = {
-                "url": "http://localhost:8080/api/switchstatus/" + this.id,
+                "url": "/api/switchstatus/" + this.id,
                 "method": "GET",
                 "timeout": 0,
             };
@@ -89,7 +89,7 @@
             var value = obj.value;//得到修改后的值
             var id = obj.data.id; //得到所在行所有键值
             var settings = {
-                "url": "http://localhost:8080/api/updata/" + id,
+                "url": "/api/updata/" + id,
                 "method": "POST",
                 "timeout": 0,
                 "headers": {

@@ -13,8 +13,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static com.bfd.tools.basic.a_PropertiesLoadUtil.loadProperties;
-
 
 /*
 初始化创建连接队列
@@ -32,7 +30,7 @@ public class b_DBUtil_ConnectionPool {
 
     static {
         try {
-            Properties prop = loadProperties("config.properties");
+            Properties prop = System.getProperties();
             url = prop.getProperty("url");
             username = prop.getProperty("username");
             password = prop.getProperty("password");
