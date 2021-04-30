@@ -52,7 +52,7 @@ public class TaskController {
             response.close();
         } catch (Exception e) {
             logger.error("", e);
-            return Result.failed("请求失败,请检查postman格式");
+            return Result.failed("请求失败,请检查postman格式" + e);
         }
 
         //验证topicname是否存在
