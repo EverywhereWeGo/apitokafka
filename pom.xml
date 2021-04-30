@@ -163,6 +163,7 @@
                         <exclude>/*.yml</exclude>
                         <exclude>/*.xml</exclude>
                         <exclude>/*.properties</exclude>
+                        <exclude>/*.sql</exclude>
                     </excludes>
                     <outputDirectory>
                         ${project.build.directory}/PACKAGE/${project.name}
