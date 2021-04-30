@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>config</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="plugin/layui/css/layui.css" media="all">
+</head>
+<body>
+<form class="layui-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label">地址</label>
+        <div class="layui-input-block">
+            <input type="text" name="address" placeholder="mysql连接地址" autocomplete="off" lay-verify="required"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">用户名</label>
+        <div class="layui-input-inline">
+            <input type="text" name="username" lay-verify="required" autocomplete="off" placeholder="请输入用户名"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-inline">
+            <input type="text" name="password" lay-verify="required" autocomplete="off" placeholder="请输入密码"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="addconfig">递交</button>
+        </div>
+    </div>
+</form>
+<script src="plugin/layui/layui.js" charset="utf-8"></script>
+
+<script>
+    layui.use(['form', 'layer'], function () {
+        var $ = layui.$;
+        var form = layui.form;
+        form.on('submit(addconfig)', function (data) {
+            var settings = {
+                "url": "http://localhost:8080/config/add",
+                "method": "POST",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "data": JSON.stringify(data.field),
+            };
+
+            $.ajax(settings).done(function (response) {
+                layer.msg(JSON.stringify(response));
+                if (response.code === 0) {
+                    window.location.href = "list.html";
+                }
+            });
+            return false;
+        });
+    });
+
+</script>
+</body>
+</html>

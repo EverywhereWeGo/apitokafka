@@ -1,15 +1,19 @@
 package com.bfd.apitype;
 
-import com.alibaba.fastjson.JSONObject;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static com.bfd.tools.HttpClientHelper.sendGet;
-import static com.bfd.tools.Kafkautils.sendMessage;
+import static com.bfd.tools.PostmanParse.generatorRequest;
+import static com.bfd.tools.StringCompiler.compilerToCode;
+import static com.bfd.tools.basic.i_StringUtil.getFirstSubString;
 
 /**
  * @author everywherewego
@@ -17,39 +21,60 @@ import static com.bfd.tools.Kafkautils.sendMessage;
  */
 public class ApiType2 implements ApiType {
     private static Logger logger = LoggerFactory.getLogger(ApiType2.class);
+    public static ConcurrentHashMap<String, Integer> current = new ConcurrentHashMap<>();
 
-
-    private static void sendhttp(String httptype, String url, String topic) {
-        if ("get".equals(httptype.toLowerCase())) {
-            String re = sendGet(url, null, null, null).get("responseContext");
-            String replace = re.replace("callbackstaticdata(", "").replace(")", "");
-            JSONObject jsonObject = JSONObject.parseObject(replace);
-            sendMessage(topic, jsonObject.toString());
-        } else if ("post".equals(httptype.toLowerCase())) {
-            /*todo
-            发送post请求时该如何处理
-            * */
-            System.out.println("发送post请求");
+    private static void sendhttp(String postmanString, String topic) {
+        try {
+            Request request = generatorRequest(postmanString);
+            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            Response response = client.newCall(request).execute();
+            String result = response.body().string();
+            System.out.println(result);
+//                sendMessage(topic, jsonObject.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    private static void startSchedule(String httptype, String url, int time, String topic) {
+    private static void startSchedule(String topic, String postmanString, int time, String incrementExpression, String stepSizeExpression, String stepSize,
+                                      String loginInfo, String loginMethod) {
+        String firstSubString = getFirstSubString(stepSizeExpression, "{", "}");
+        current.put(topic, Integer.parseInt(firstSubString));
+
         ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(2);
         executorService.scheduleAtFixedRate(
                 new Runnable() {
                     @Override
                     public void run() {
-                        sendhttp(httptype, url, topic);
+                        String replace = stepSizeExpression.replace("{" + firstSubString + "}", "{" + (current.get(topic) + Integer.parseInt(stepSize)) + "}")
+                                .replace("{", "").replace("}", "");
+                        String nextPage = postmanString.replace(incrementExpression, replace);
+
+                        //如果有前置验证则先验证
+                        if (null != loginInfo) {
+                            Class<?> loginClass = compilerToCode(loginMethod);
+                            LoginProcessor loginProcessor = null;
+                            try {
+                                loginProcessor = (LoginProcessor) loginClass.newInstance();
+                            } catch (InstantiationException | IllegalAccessException e) {
+                                e.printStackTrace();
+                            }
+                            nextPage = nextPage.replace(loginInfo, loginProcessor.getLoginInfo());
+                        }
+
+                        sendhttp(nextPage, topic);
+                        current.put(topic, current.get(topic) + Integer.parseInt(stepSize));
                     }
                 },
                 1,
                 time,
                 TimeUnit.SECONDS);
-        logger.info("程序已经启动:" + url);
+        logger.info("程序已经启动:\n" + postmanString);
     }
 
+
     @Override
-    public void run(String[] type1Params) {
-        startSchedule(type1Params[2], type1Params[1], Integer.parseInt(type1Params[3]), type1Params[8]);
+    public void run(String[] params) {
+        startSchedule(params[1], params[2], Integer.parseInt(params[3]), params[4], params[5], params[6], params[7], params[8]);
     }
 }

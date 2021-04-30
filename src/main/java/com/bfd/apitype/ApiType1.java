@@ -2,15 +2,19 @@ package com.bfd.apitype;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jayway.jsonpath.JsonPath;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static com.bfd.tools.HttpClientHelper.sendGet;
-import static com.bfd.tools.Kafkautils.sendMessage;
+import static com.bfd.tools.PostmanParse.generatorRequest;
+
 
 /**
  * @author everywherewego
@@ -21,46 +25,54 @@ import static com.bfd.tools.Kafkautils.sendMessage;
 public class ApiType1 implements ApiType {
     private static Logger logger = LoggerFactory.getLogger(ApiType1.class);
 
-    public static String lasttime = "";
+    public static ConcurrentHashMap<String, String> incrementValue = new ConcurrentHashMap<>();
 
 
-    private static void sendhttp(String httptype, String url, String topic) {
-        if ("get".equals(httptype.toLowerCase())) {
-            String re = sendGet(url, null, null, null).get("responseContext");
-            JSONObject jsonObject = JSONObject.parseObject(re);
+    private static void sendhttp(String postmanString, String topic, String incrementExpression) {
+        try {
+            Request request = generatorRequest(postmanString);
+            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            Response response = client.newCall(request).execute();
+            String jsonResult = response.body().string();
+
+            JSONObject jsonObject = JSONObject.parseObject(jsonResult);
+
             //判断重复
-            String time = JsonPath.read(re, "$.data[0].time");
-            if (!time.equals(lasttime)) {
-                lasttime = time;
-                sendMessage(topic, jsonObject.toString());
+            String incrementFiled = JsonPath.read(jsonObject, incrementExpression);
+
+            if (!incrementFiled.equals(incrementValue.get(topic))) {
+                incrementValue.put(topic, incrementFiled);
+
+                System.out.println(jsonObject);
+//                sendMessage(topic, jsonObject.toString());
             }
-        } else if ("post".equals(httptype.toLowerCase())) {
-            /*todo
-             * 发送post请求时该如何处理
-             * */
-            System.out.println("发送post请求");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+
     }
 
 
-    private static void startSchedule(String httptype, String url, int time, String topic) {
+    private static void startSchedule(String topic, String postmanString, int time, String incrementExpression) {
+        incrementValue.put(topic, "");
+
         ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(2);
         executorService.scheduleAtFixedRate(
                 new Runnable() {
                     @Override
                     public void run() {
-                        sendhttp(httptype, url, topic);
+                        sendhttp(postmanString, topic, incrementExpression);
                     }
                 },
                 1,
                 time,
                 TimeUnit.SECONDS);
-        logger.info("程序已经启动:" + url);
+        logger.info("程序已经启动:\n" + postmanString);
     }
 
     @Override
-    public void run(String[] type1Params) {
-        startSchedule(type1Params[2], type1Params[1], Integer.parseInt(type1Params[3]), type1Params[8]);
-
+    public void run(String[] params) {
+        startSchedule(params[1], params[2], Integer.parseInt(params[3]), params[4]);
     }
 }

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>add</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="plugin/layui/css/layui.css" media="all">
+</head>
+<body>
+<form class="layui-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label">接口名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="apiname" placeholder="接口名称" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">接口类型</label>
+        <div class="layui-input-block">
+            <select name="apitype" lay-verify="required" lay-filter="apitype">
+                <option value=""></option>
+                <option value="1">type1</option>
+                <option value="2">type2</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">postman</label>
+        <div class="layui-input-block">
+            <textarea name="postmanString" lay-verify="required" placeholder="postman生成代码"
+                      class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">采集频率(秒)</label>
+        <div class="layui-input-inline">
+            <input type="text" name="interval" lay-verify="number" placeholder="单位秒" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">表名</label>
+        <div class="layui-input-inline">
+            <input type="text" name="topicName" placeholder="topic名称" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div id="type1"></div>
+    <div id="type2"></div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">返回值入库字段</label>
+        <div class="layui-input-inline">
+            <input type="text" name="loadfield" placeholder="jsonpath表达式" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">前置验证</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="prevalidation" lay-skin="switch" lay-filter="prevalidation">
+        </div>
+    </div>
+    <div id="prevalidation"></div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="add">递交</button>
+        </div>
+    </div>
+
+</form>
+
+<script src="plugin/layui/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'layer'], function () {
+        var $ = layui.$;
+        var form = layui.form;
+        form.on('select(apitype)', function (data) {
+            if (data.value === '1') {
+                $("#type1").empty();
+                $("#type2").empty();
+                $("#type1").append("    <div class=\"layui-form-item\">\n" +
+                    "        <label class=\"layui-form-label\">增量字段</label>\n" +
+                    "        <div class=\"layui-input-inline\">\n" +
+                    "            <input type=\"text\" name=\"incrementExpression\" lay-verify=\"title\" autocomplete=\"off\" placeholder=\"增量字段表达式\"\n" +
+                    "                   class=\"layui-input\">\n" +
+                    "        </div>\n" +
+                    "    </div>\n");
+            }
+            if (data.value === '2') {
+                $("#type1").empty();
+                $("#type2").empty();
+                $("#type2").append("    <div class=\"layui-form-item\">\n" +
+                    "        <label class=\"layui-form-label\">替换的区域</label>\n" +
+                    "        <div class=\"layui-input-block\">\n" +
+                    "            <input type=\"text\" name=\"replacepostman\" lay-verify=\"title\" autocomplete=\"off\" placeholder=\"postman生成代码需要替换的区域\"\n" +
+                    "                   class=\"layui-input\">\n" +
+                    "        </div>\n" +
+                    "    </div>\n" +
+                    "    <div class=\"layui-form-item\">\n" +
+                    "        <label class=\"layui-form-label\">步长的区域</label>\n" +
+                    "        <div class=\"layui-input-block\">\n" +
+                    "            <input type=\"text\" name=\"replacepage\" lay-verify=\"title\" autocomplete=\"off\" placeholder=\"用{}标记需要替换的部分\"\n" +
+                    "                   class=\"layui-input\">\n" +
+                    "        </div>\n" +
+                    "    </div>\n" +
+                    "    <div class=\"layui-form-item\">\n" +
+                    "        <label class=\"layui-form-label\">步长</label>\n" +
+                    "        <div class=\"layui-input-inline\">\n" +
+                    "            <input type=\"text\" name=\"stepsize\" lay-verify=\"required\" placeholder=\"\" autocomplete=\"off\"\n" +
+                    "                   class=\"layui-input\">\n" +
+                    "        </div>\n" +
+                    "    </div>");
+            }
+        });
+    });
+
+    layui.use(['form', 'layer'], function () {
+        var $ = layui.$;
+        var form = layui.form;
+        form.on('switch(prevalidation)', function (data) {
+            if (data.elem.checked) {
+                $("#prevalidation").append("        <div class=\"layui-form-item layui-form-text\">\n" +
+                    "            <label class=\"layui-form-label\">验证方法</label>\n" +
+                    "            <div class=\"layui-input-block\">\n" +
+                    "            <textarea name=\"postmanString\" lay-verify=\"required\" placeholder=\"package com.bfd.apitype;\n" +
+                    "\n" +
+                    "import okhttp3.*;\n" +
+                    "\n" +
+                    "import java.io.IOException;\n" +
+                    "import java.util.Base64;\n" +
+                    "\n" +
+                    "import static com.bfd.tools.basic.i_StringUtil.getFirstSubString;\n" +
+                    "\n" +
+                    "/**\n" +
+                    " * @author everywherewego\n" +
+                    " * @date 3/5/21 10:24 AM\n" +
+                    " */\n" +
+                    "\n" +
+                    "public class TypeLoginProcessor extends LoginProcessor {\n" +
+                    "    @Override\n" +
+                    "    public String getLoginInfo() {\n" +
+                    "        return s;\n" +
+                    "    }\n" +
+                    "\n" +
+                    "}\n\"\n" +
+                    "                      class=\"layui-textarea\"></textarea>\n" +
+                    "            </div>\n" +
+                    "        </div>\n" +
+                    "        <div class=\"layui-form-item\">\n" +
+                    "            <label class=\"layui-form-label\">验证替换区域</label>\n" +
+                    "            <div class=\"layui-input-block\">\n" +
+                    "                <input type=\"text\" name=\"replacepostman\" lay-verify=\"title\" autocomplete=\"off\"\n" +
+                    "                       placeholder=\"postman生成代码需要替换的区域\" class=\"layui-input\">\n" +
+                    "            </div>\n" +
+                    "        </div>")
+            } else {
+                $("#prevalidation").empty();
+            }
+        });
+    });
+
+
+    layui.use(['form', 'layer'], function () {
+        var $ = layui.$;
+        var form = layui.form;
+        form.on('submit(add)', function (data) {
+            var settings = {
+                "url": "http://localhost:8080/api/add",
+                "method": "POST",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "data": JSON.stringify(data.field),
+            };
+
+            $.ajax(settings).done(function (response) {
+                layer.msg(JSON.stringify(response));
+            });
+            return false;
+        });
+    });
+
+
+</script>
+
+
+</body>
+</html>
