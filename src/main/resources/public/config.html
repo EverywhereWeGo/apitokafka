@@ -13,7 +13,8 @@
     <div class="layui-form-item">
         <label class="layui-form-label">地址</label>
         <div class="layui-input-block">
-            <input type="text" name="address" placeholder="mysql连接地址:jdbc:mysql://localhost:3306/test" autocomplete="off" lay-verify="required"
+            <input type="text" name="address" placeholder="mysql连接地址:jdbc:mysql://localhost:3306/test"
+                   autocomplete="off" lay-verify="required"
                    class="layui-input">
         </div>
     </div>
@@ -45,6 +46,9 @@
         var $ = layui.$;
         var form = layui.form;
         form.on('submit(addconfig)', function (data) {
+            var index = layer.load(1, {
+                shade: [0.1, '#fff'] //0.1透明度的白色背景
+            });
             var settings = {
                 "url": "/config/add",
                 "method": "POST",
@@ -56,6 +60,7 @@
             };
 
             $.ajax(settings).done(function (response) {
+                layer.close(index);
                 layer.msg(JSON.stringify(response));
                 if (response.code === 0) {
                     window.location.href = "list.html";
