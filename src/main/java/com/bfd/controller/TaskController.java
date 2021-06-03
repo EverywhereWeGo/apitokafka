@@ -7,6 +7,7 @@ import com.bfd.domain.dao.ApiInfo;
 import com.bfd.mapper.ApiInfoMapper;
 import com.bfd.service.quartzjob.QuartzJobType1;
 import com.bfd.service.quartzjob.QuartzJobType2;
+import com.bfd.service.quartzjob.QuartzJobType3;
 import com.bfd.tools.QuartzUtils;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -66,7 +67,6 @@ public class TaskController {
 
         ApiInfo apiInfo = new ApiInfo();
         apiInfo.setUrl(getUrl(postmanString));
-        apiInfo.setIntervalTime(Integer.parseInt(map.get("interval")));
         apiInfo.setType(Integer.parseInt(map.get("apitype")));
         apiInfo.setName(map.get("apiname"));
         apiInfo.setTopicName(map.get("topicName"));
@@ -74,15 +74,20 @@ public class TaskController {
         apiInfo.setStatus("r");
 
         if ("1".equals(map.get("apitype"))) {
-            //入库
+            apiInfo.setIntervalTime(map.get("interval"));
             apiInfoMapper.insert(apiInfo);
-            //添加调度
+
             QuartzUtils.createJob(scheduler, QuartzJobType1.class, String.valueOf(apiInfo.getId()), "wangchong", String.valueOf(apiInfo.getIntervalTime()), map);
         } else if ("2".equals(map.get("apitype"))) {
-            //入库
+            apiInfo.setIntervalTime(map.get("interval"));
             apiInfoMapper.insert(apiInfo);
-            //添加调度
+
             QuartzUtils.createJob(scheduler, QuartzJobType2.class, String.valueOf(apiInfo.getId()), "wangchong", String.valueOf(apiInfo.getIntervalTime()), map);
+        } else if ("3".equals(map.get("apitype"))) {
+            apiInfo.setIntervalTime("-");
+            apiInfoMapper.insert(apiInfo);
+            QuartzUtils.createJob(scheduler, QuartzJobType3.class, String.valueOf(apiInfo.getId()), "wangchong", QuartzUtils.getCronAfterNow(2), map);
+
         }
         return Result.succeed("创建成功");
     }
@@ -112,7 +117,7 @@ public class TaskController {
     @PostMapping("/updata/{jobid}")
     public Result<String> updateJob(@PathVariable String jobid, @RequestBody Map<String, String> map) throws SchedulerException {
         ApiInfo apiInfo = apiInfoMapper.selectById(jobid);
-        apiInfo.setIntervalTime(Integer.parseInt(map.get("interval")));
+        apiInfo.setIntervalTime(map.get("interval"));
         apiInfo.setStatus("r");
         apiInfoMapper.updateById(apiInfo);
         QuartzUtils.refreshJob(scheduler, jobid, "wangchong", map.get("interval"));

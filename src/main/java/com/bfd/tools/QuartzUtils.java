@@ -2,6 +2,8 @@ package com.bfd.tools;
 
 import org.quartz.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -10,8 +12,8 @@ import java.util.Map;
  */
 
 public class QuartzUtils {
-    //如果inteverTIme 包含空格的话就是cron表达式,否则就是简单表达式
-    public static void createJob(Scheduler scheduler, Class<? extends Job> jobClass, String jobName, String jobGroup, String inteverTIme, Map<String, String> param) throws SchedulerException {
+    //如果inteverTime 包含空格的话就是cron表达式,否则就是简单表达式
+    public static void createJob(Scheduler scheduler, Class<? extends Job> jobClass, String jobName, String jobGroup, String inteverTime, Map<String, String> param) throws SchedulerException {
         JobDetail jobDetail = JobBuilder.newJob(jobClass)
                 .withIdentity(jobName, jobGroup)
                 .build();
@@ -19,19 +21,19 @@ public class QuartzUtils {
             param.forEach((key, value) -> jobDetail.getJobDataMap().put(key, value));
         }
 
-        if (inteverTIme.contains(" ")) {
-            scheduler.scheduleJob(jobDetail, buildCronTrigger(jobName, jobGroup, inteverTIme));
+        if (inteverTime.contains(" ")) {
+            scheduler.scheduleJob(jobDetail, buildCronTrigger(jobName, jobGroup, inteverTime));
         } else {
-            scheduler.scheduleJob(jobDetail, buildSimpleTrigger(jobName, jobGroup, Integer.valueOf(inteverTIme)));
+            scheduler.scheduleJob(jobDetail, buildSimpleTrigger(jobName, jobGroup, Integer.valueOf(inteverTime)));
         }
     }
 
-    public static void refreshJob(Scheduler scheduler, String jobName, String jobGroup, String inteverTIme) throws SchedulerException {
+    public static void refreshJob(Scheduler scheduler, String jobName, String jobGroup, String inteverTime) throws SchedulerException {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
-        if (inteverTIme.contains(" ")) {
-            scheduler.rescheduleJob(triggerKey, buildCronTrigger(jobName, jobGroup, inteverTIme));
+        if (inteverTime.contains(" ")) {
+            scheduler.rescheduleJob(triggerKey, buildCronTrigger(jobName, jobGroup, inteverTime));
         } else {
-            scheduler.rescheduleJob(triggerKey, buildSimpleTrigger(jobName, jobGroup, Integer.valueOf(inteverTIme)));
+            scheduler.rescheduleJob(triggerKey, buildSimpleTrigger(jobName, jobGroup, Integer.valueOf(inteverTime)));
         }
     }
 
@@ -63,6 +65,18 @@ public class QuartzUtils {
                 .withIdentity(jobName, jobGroup)
                 .withSchedule(simpleScheduleBuilder)
                 .build();
+    }
+
+
+    public static String getCronAfterNow(int second) {
+        String formatTimeStr = null;
+        String dateFormat = "ss mm HH dd MM ? yyyy";
+        Date date = new Date(System.currentTimeMillis() + second * 1000);
+        SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+        if (date != null) {
+            formatTimeStr = sdf.format(date);
+        }
+        return formatTimeStr;
     }
 
 }

@@ -1,0 +1,50 @@
+{
+  "store": {
+    "book": [
+      {
+        "category": "reference",
+        "author": "Nigel Rees",
+        "title": "Sayings of the Century",
+        "price": 8.95
+      },
+      {
+        "category": "fiction",
+        "author": "Evelyn Waugh",
+        "title": "Sword of Honour",
+        "price": 12.99
+      },
+      {
+        "category": "fiction",
+        "author": "Herman Melville",
+        "title": "Moby Dick",
+        "isbn": "0-553-21311-3",
+        "price": 8.99
+      },
+      {
+        "category": "fiction",
+        "author": "J. R. R. Tolkien",
+        "title": "The Lord of the Rings",
+        "isbn": "0-395-19395-8",
+        "price": 22.99
+      }
+    ],
+    "bicycle": {
+      "color": "red",
+      "price": 19.95
+    }
+  },
+  "expensive": 10
+}
+
+{
+  "status": 1,
+  "msg": "古诗获取成功！",
+  "data": {
+    "id": 1354,
+    "subject": "鸱鸮",
+    "dynasty": "先秦",
+    "author": "诗经",
+    "content": "鸱鸮鸱鸮，既取我子，无毁我室。恩斯勤斯，鬻子之闵斯。迨天之未阴雨，彻彼桑土，绸缪牖户。今女下民，或敢侮予。予手拮据，予所捋荼，予所蓄租，予口卒瘏，曰予未有室家。予羽谯谯，予尾翛翛，予室翘翘。风雨所漂摇，予维音哓哓。"
+  },
+  "timestamp": 1622724063025
+}

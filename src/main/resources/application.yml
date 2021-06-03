@@ -34,6 +34,6 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true #开启驼峰命名规则支持
     cache-enabled: false
-    #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-    #扫描mapper持久层接口
-  #  mapper-locations: classpath:com.xwl/**/mapper/*Mapper.xml
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    扫描mapper持久层接口
+#    mapper-locations: classpath:com.xwl/**/mapper/*Mapper.xml

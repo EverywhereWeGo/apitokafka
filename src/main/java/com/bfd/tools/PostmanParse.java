@@ -17,28 +17,33 @@ import static com.bfd.tools.basic.i_StringUtil.getFirstSubString;
 
 public class PostmanParse {
     //url根据.url(" 和 ") 获取
-    public static String getUrl(String response) {
-        String url = getFirstSubString(response, ".url(\"", "\")");
-        return url;
+    public static String getUrl(String postmanString) {
+        String url = getFirstSubString(postmanString, ".url(\"", "\")");
+        if (url.startsWith("http")) {
+            return url;
+        } else {
+            return "http://" + url;
+        }
+
     }
 
     //method 根据.method(" 和 ", 截取
-    public static String getMethod(String response) {
+    private static String getMethod(String response) {
         String method = getFirstSubString(response, ".method(\"", "\",");
         return method;
     }
 
 
-    public static Map<String, String> getHeaders(String response) {
+    private static Map<String, String> getHeaders(String response) {
         return getMap(response, "addHeader");
     }
 
-    public static Map<String, String> getAddFormDataPart(String response) {
+    private static Map<String, String> getAddFormDataPart(String response) {
         return getMap(response, "addFormDataPart");
     }
 
 
-    public static Map<String, String> getMap(String allString, String matching) {
+    private static Map<String, String> getMap(String allString, String matching) {
         HashMap<String, String> match = new HashMap<>();
         int flag = 0;
         while (true) {
@@ -57,13 +62,13 @@ public class PostmanParse {
     }
 
 
-    public static String getMediaType(String postmanString) {
+    private static String getMediaType(String postmanString) {
         String mediType = getFirstSubString(postmanString, "MediaType mediaType = MediaType.parse(\"", "\");");
         return mediType;
 
     }
 
-    public static Request generatorPost(String url, Map<String, String> header, String postmanString) {
+    private static Request generatorPost(String url, Map<String, String> header, String postmanString) {
         Request.Builder builder = new Request.Builder();
 
 
@@ -94,7 +99,7 @@ public class PostmanParse {
     }
 
 
-    public static Request generatorGet(String url, Map<String, String> header) {
+    private static Request generatorGet(String url, Map<String, String> header) {
         Request.Builder builder = new Request.Builder();
         builder.url(url).method("GET", null);
 

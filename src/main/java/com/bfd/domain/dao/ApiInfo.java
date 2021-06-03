@@ -16,7 +16,7 @@ public class ApiInfo {
     private String url;
     private String name;
     private Integer type;
-    private Integer intervalTime;
+    private String intervalTime;
     private String topicName;
     private String otherparams;
     private String status;
@@ -55,11 +55,11 @@ public class ApiInfo {
         this.type = type;
     }
 
-    public Integer getIntervalTime() {
+    public String getIntervalTime() {
         return intervalTime;
     }
 
-    public void setIntervalTime(Integer intervalTime) {
+    public void setIntervalTime(String intervalTime) {
         this.intervalTime = intervalTime;
     }
 
