@@ -1,0 +1,5 @@
+1、启动 sh ./bin/start.sh
+2、访问 http://ip:port/
+3、添加数据库配置
+4、新增页面http://localhost:8081/add.html
+   列表页面http://localhost:8081/list.html
