@@ -56,8 +56,7 @@ public class QuartzJobType3 extends QuartzJobBean {
             apiInfo.setCurrentFlag("-");
             apiInfoMapper.updateById(apiInfo);
 
-        } catch (
-                Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

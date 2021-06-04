@@ -46,6 +46,13 @@ public class TaskController {
     public Result add(@RequestBody Map<String, String> map) throws SchedulerException {
         //先验证能否访问
         String postmanString = map.get("postmanString");
+
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         try {
             Request request = generatorRequest(postmanString);
             OkHttpClient client = new OkHttpClient().newBuilder().build();
