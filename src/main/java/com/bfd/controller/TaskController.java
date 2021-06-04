@@ -76,7 +76,6 @@ public class TaskController {
         if ("1".equals(map.get("apitype"))) {
             apiInfo.setIntervalTime(map.get("interval"));
             apiInfoMapper.insert(apiInfo);
-
             QuartzUtils.createJob(scheduler, QuartzJobType1.class, String.valueOf(apiInfo.getId()), "wangchong", String.valueOf(apiInfo.getIntervalTime()), map);
         } else if ("2".equals(map.get("apitype"))) {
             apiInfo.setIntervalTime(map.get("interval"));
@@ -86,7 +85,8 @@ public class TaskController {
         } else if ("3".equals(map.get("apitype"))) {
             apiInfo.setIntervalTime("-");
             apiInfoMapper.insert(apiInfo);
-            QuartzUtils.createJob(scheduler, QuartzJobType3.class, String.valueOf(apiInfo.getId()), "wangchong", QuartzUtils.getCronAfterNow(2), map);
+
+            QuartzUtils.createJob(scheduler, QuartzJobType3.class, String.valueOf(apiInfo.getId()), "wangchong", QuartzUtils.getCronAfterNow(3), map);
 
         }
         return Result.succeed("创建成功");
@@ -102,6 +102,13 @@ public class TaskController {
     @GetMapping("/switchstatus/{jobid}")
     public Result<String> pauseJob(@PathVariable String jobid) throws SchedulerException {
         ApiInfo apiInfo = apiInfoMapper.selectById(jobid);
+        if (apiInfo.getType() == 3) {
+            if (null == apiInfo.getCurrentFlag()) {
+                QuartzUtils.refreshJob(scheduler, jobid, "wangchong", QuartzUtils.getCronAfterNow(3));
+            }
+            return Result.succeed("执行成功");
+        }
+
         if ("r".equals(apiInfo.getStatus())) {
             apiInfo.setStatus("p");
             apiInfoMapper.updateById(apiInfo);
@@ -117,10 +124,17 @@ public class TaskController {
     @PostMapping("/updata/{jobid}")
     public Result<String> updateJob(@PathVariable String jobid, @RequestBody Map<String, String> map) throws SchedulerException {
         ApiInfo apiInfo = apiInfoMapper.selectById(jobid);
-        apiInfo.setIntervalTime(map.get("interval"));
         apiInfo.setStatus("r");
+
+        if (apiInfo.getType() == 3) {
+            apiInfo.setIntervalTime("-");
+            QuartzUtils.refreshJob(scheduler, jobid, "wangchong", QuartzUtils.getCronAfterNow(3));
+        } else {
+            apiInfo.setIntervalTime(map.get("interval"));
+            QuartzUtils.refreshJob(scheduler, jobid, "wangchong", map.get("interval"));
+        }
         apiInfoMapper.updateById(apiInfo);
-        QuartzUtils.refreshJob(scheduler, jobid, "wangchong", map.get("interval"));
+
         return Result.succeed("更新成功");
     }
 

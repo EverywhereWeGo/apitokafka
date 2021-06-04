@@ -16,6 +16,8 @@ public class QuartzUtils {
     public static void createJob(Scheduler scheduler, Class<? extends Job> jobClass, String jobName, String jobGroup, String inteverTime, Map<String, String> param) throws SchedulerException {
         JobDetail jobDetail = JobBuilder.newJob(jobClass)
                 .withIdentity(jobName, jobGroup)
+                //该参数指定当triger触发完的时候，是否还保存该jobdetail
+                .storeDurably(true)
                 .build();
         if (param != null && !param.isEmpty()) {
             param.forEach((key, value) -> jobDetail.getJobDataMap().put(key, value));
@@ -30,10 +32,23 @@ public class QuartzUtils {
 
     public static void refreshJob(Scheduler scheduler, String jobName, String jobGroup, String inteverTime) throws SchedulerException {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
+        Trigger oldtrigger = scheduler.getTrigger(triggerKey);
+
+        Trigger trigger;
         if (inteverTime.contains(" ")) {
-            scheduler.rescheduleJob(triggerKey, buildCronTrigger(jobName, jobGroup, inteverTime));
+            trigger = buildCronTrigger(jobName, jobGroup, inteverTime);
         } else {
-            scheduler.rescheduleJob(triggerKey, buildSimpleTrigger(jobName, jobGroup, Integer.valueOf(inteverTime)));
+            trigger = buildSimpleTrigger(jobName, jobGroup, Integer.valueOf(inteverTime));
+        }
+
+        //如果旧的trigger不存在，删除原来的job，新建一个，否则替换triger
+        if (null == oldtrigger) {
+            JobDetail jobDetail = scheduler.getJobDetail(JobKey.jobKey(jobName, jobGroup));
+            scheduler.unscheduleJob(TriggerKey.triggerKey(jobName, jobGroup));
+            scheduler.deleteJob(JobKey.jobKey(jobName, jobGroup));
+            scheduler.scheduleJob(jobDetail, trigger);
+        } else {
+            scheduler.rescheduleJob(triggerKey, trigger);
         }
     }
 
@@ -52,19 +67,22 @@ public class QuartzUtils {
     }
 
     private static Trigger buildCronTrigger(String jobName, String jobGroup, String cron) {
-        CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(cron).withMisfireHandlingInstructionDoNothing();
-        return TriggerBuilder.newTrigger()
+        CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
+        CronTrigger cronTrigger = TriggerBuilder.newTrigger()
                 .withIdentity(jobName, jobGroup)
-                .withSchedule(scheduleBuilder)
+                .withSchedule(scheduleBuilder).forJob(jobName, jobGroup)
                 .build();
+
+        return cronTrigger;
     }
 
     private static Trigger buildSimpleTrigger(String jobName, String jobGroup, int second) {
         SimpleScheduleBuilder simpleScheduleBuilder = SimpleScheduleBuilder.repeatSecondlyForever(second).withMisfireHandlingInstructionNextWithRemainingCount();
-        return TriggerBuilder.newTrigger()
+        SimpleTrigger simpleTrigger = TriggerBuilder.newTrigger()
                 .withIdentity(jobName, jobGroup)
                 .withSchedule(simpleScheduleBuilder)
                 .build();
+        return simpleTrigger;
     }
 
 
@@ -76,7 +94,13 @@ public class QuartzUtils {
         if (date != null) {
             formatTimeStr = sdf.format(date);
         }
+
         return formatTimeStr;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(getCronAfterNow(100));
+
     }
 
 }

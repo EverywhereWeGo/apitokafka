@@ -6,7 +6,6 @@ import com.bfd.domain.dao.ApiInfo;
 import com.bfd.mapper.ApiInfoMapper;
 import com.bfd.tools.JsonPathUtil;
 import com.bfd.tools.JsonToTable;
-import com.bfd.tools.QuartzUtils;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -52,8 +51,7 @@ public class QuartzJobType3 extends QuartzJobBean {
             JSONArray jsonArray = JsonPathUtil.parseToJsonArryByJsonPath(jsonResult, jobDataMap.getString("loadfield"));
 
             JsonToTable.insertDatatoMysql(jsonArray, apiInfo.getTopicName());
-            //没数据暂停调度
-            QuartzUtils.pauseJob(scheduler, String.valueOf(apiInfo.getId()), "wangchong");
+
             apiInfo.setStatus("p");
             apiInfo.setCurrentFlag("-");
             apiInfoMapper.updateById(apiInfo);

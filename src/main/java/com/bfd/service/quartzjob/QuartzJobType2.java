@@ -66,7 +66,6 @@ public class QuartzJobType2 extends QuartzJobBean {
 
             Object object = JsonPath.read(jsonResult, jobDataMap.getString("loadfield"));
             JSONArray jsonArray = JSON.parseArray(object.toString());
-            System.out.println();
 
 
             if (jsonArray.size() > 0) {
