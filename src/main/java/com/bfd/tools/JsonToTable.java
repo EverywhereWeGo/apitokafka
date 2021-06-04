@@ -51,7 +51,7 @@ public class JsonToTable {
     }
 
     private static void alterTable(String tableName, Set<String> newFields) {
-        String modelSql = "ALTER TABLE {0} ADD {1} text";
+        String modelSql = "ALTER TABLE {0} ADD {1} LONGTEXT";
         for (String e : newFields) {
             String replace = modelSql.replace("{0}", tableName).replace("{1}", e);
             ddlSql(replace);
