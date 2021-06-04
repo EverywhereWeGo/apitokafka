@@ -25,6 +25,7 @@
                 <option value=""></option>
                 <option value="1">type1</option>
                 <option value="2">type2</option>
+                <option value="3">type3</option>
             </select>
         </div>
     </div>
@@ -36,13 +37,7 @@
                       class="layui-textarea"></textarea>
         </div>
     </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">采集频率(秒)</label>
-        <div class="layui-input-inline">
-            <input type="text" name="interval" lay-verify="number" placeholder="单位秒" autocomplete="off"
-                   class="layui-input">
-        </div>
-    </div>
+
 
     <div class="layui-form-item">
         <label class="layui-form-label">表名</label>
@@ -54,6 +49,7 @@
 
     <div id="type1"></div>
     <div id="type2"></div>
+    <div id="type3"></div>
 
     <div class="layui-form-item">
         <label class="layui-form-label">返回值入库字段</label>
@@ -83,12 +79,37 @@
 <script>
     layui.use(['form', 'layer'], function () {
         var $ = layui.$;
+        var settings = {
+            "url": "/config/check",
+            "method": "GET",
+            "timeout": 0,
+        };
+
+        $.ajax(settings).done(function (response) {
+            if (response.code !== 0) {
+                window.location.href = "config.html";
+            }
+        });
+    })
+</script>
+<script>
+    layui.use(['form', 'layer'], function () {
+        var $ = layui.$;
         var form = layui.form;
         form.on('select(apitype)', function (data) {
+            $("#type1").empty();
+            $("#type2").empty();
+            $("#type3").empty();
             if (data.value === '1') {
-                $("#type1").empty();
-                $("#type2").empty();
+
                 $("#type1").append("    <div class=\"layui-form-item\">\n" +
+                    "        <label class=\"layui-form-label\">采集频率(秒)</label>\n" +
+                    "        <div class=\"layui-input-inline\">\n" +
+                    "            <input type=\"text\" name=\"interval\" lay-verify=\"number\" placeholder=\"单位秒\" autocomplete=\"off\"\n" +
+                    "                   class=\"layui-input\">\n" +
+                    "        </div>\n" +
+                    "    </div>" +
+                    "    <div class=\"layui-form-item\">\n" +
                     "        <label class=\"layui-form-label\">增量字段</label>\n" +
                     "        <div class=\"layui-input-inline\">\n" +
                     "            <input type=\"text\" name=\"incrementExpression\" lay-verify=\"title\" autocomplete=\"off\" placeholder=\"增量字段表达式\"\n" +
@@ -100,16 +121,23 @@
                 $("#type1").empty();
                 $("#type2").empty();
                 $("#type2").append("    <div class=\"layui-form-item\">\n" +
+                    "        <label class=\"layui-form-label\">采集频率(秒)</label>\n" +
+                    "        <div class=\"layui-input-inline\">\n" +
+                    "            <input type=\"text\" name=\"interval\" lay-verify=\"number\" placeholder=\"单位秒\" autocomplete=\"off\"\n" +
+                    "                   class=\"layui-input\">\n" +
+                    "        </div>\n" +
+                    "    </div>" +
+                    "    <div class=\"layui-form-item\">\n" +
                     "        <label class=\"layui-form-label\">替换的区域</label>\n" +
                     "        <div class=\"layui-input-block\">\n" +
-                    "            <input type=\"text\" name=\"replacepostman\" lay-verify=\"title\" autocomplete=\"off\" placeholder=\"postman生成代码需要替换的区域\"\n" +
+                    "            <input type=\"text\" name=\"replacepostman\" lay-verify=\"title\" autocomplete=\"off\" placeholder=\"postman生成代码需要替换的区域,https://interface.sina.cn/news/wap/fymap2020_data.d.json?page=1\"\n" +
                     "                   class=\"layui-input\">\n" +
                     "        </div>\n" +
                     "    </div>\n" +
                     "    <div class=\"layui-form-item\">\n" +
                     "        <label class=\"layui-form-label\">步长的区域</label>\n" +
                     "        <div class=\"layui-input-block\">\n" +
-                    "            <input type=\"text\" name=\"replacepage\" lay-verify=\"title\" autocomplete=\"off\" placeholder=\"用{}标记需要替换的部分\"\n" +
+                    "            <input type=\"text\" name=\"replacepage\" lay-verify=\"title\" autocomplete=\"off\" placeholder=\"用{}标记需要替换的部分,https://interface.sina.cn/news/wap/fymap2020_data.d.json?page={1}\"\n" +
                     "                   class=\"layui-input\">\n" +
                     "        </div>\n" +
                     "    </div>\n" +
@@ -120,6 +148,10 @@
                     "                   class=\"layui-input\">\n" +
                     "        </div>\n" +
                     "    </div>");
+            }
+            if (data.value == '3') {
+                $("#type2").append("")
+
             }
         });
     });
